@@ -11,6 +11,7 @@ from paperless.models import LLMBackend
 
 if TYPE_CHECKING:
     from llama_index.llms.ollama import Ollama
+    from llama_index.llms.openai import OpenAIResponses
     from llama_index.llms.openai_like import OpenAILike
 
 from paperless.config import AIConfig
@@ -52,7 +53,7 @@ class AIClient:
         self.settings = AIConfig()
         self.llm = self.get_llm()
 
-    def get_llm(self) -> "Ollama | OpenAILike":
+    def get_llm(self) -> "Ollama | OpenAILike | OpenAIResponses":
         if self.settings.llm_backend == LLMBackend.OLLAMA:
             from llama_index.llms.ollama import Ollama
             from ollama import AsyncClient
@@ -103,6 +104,25 @@ class AIClient:
                     endpoint,
                     allow_internal=self.settings.llm_allow_internal_endpoints,
                     timeout=self.settings.llm_request_timeout,
+                )
+            if self.settings.llm_use_responses_api:
+                from llama_index.llms.openai import OpenAIResponses
+
+                # An explicit context window skips llama-index's lookup table, so
+                # models it does not know yet still work. A non-None
+                # reasoning_options makes it omit temperature/top_p, which
+                # reasoning models reject.
+                return OpenAIResponses(
+                    model=self.settings.llm_model or "gpt-5.4-mini",
+                    api_base=endpoint,
+                    api_key=self.settings.llm_api_key or PLACEHOLDER_API_KEY,
+                    timeout=self.settings.llm_request_timeout,
+                    context_window=self.settings.llm_context_size,
+                    reasoning_options={},
+                    system_prompt=LLM_SYSTEM_PROMPT,
+                    additional_kwargs=self.settings.llm_extra_params,
+                    http_client=http_client,
+                    async_http_client=async_http_client,
                 )
             return OpenAILike(
                 model=self.settings.llm_model or "gpt-3.5-turbo",

@@ -9,6 +9,8 @@ import openai
 import pytest
 from llama_index.core.llms.llm import ToolSelection
 
+from paperless.network import PinnedHostAsyncHTTPTransport
+from paperless.network import PinnedHostHTTPTransport
 from paperless_ai.client import LLM_SYSTEM_PROMPT
 from paperless_ai.client import PLACEHOLDER_API_KEY
 from paperless_ai.client import AIClient
@@ -24,6 +26,7 @@ def mock_ai_config():
         mock_config.llm_context_size = 8192
         mock_config.llm_request_timeout = 120
         mock_config.llm_extra_params = {}
+        mock_config.llm_use_responses_api = False
         MockAIConfig.return_value = mock_config
         yield mock_config
 
@@ -227,6 +230,44 @@ def test_get_llm_passes_extra_params(request, mock_ai_config, backend, llm_fixtu
     assert llm_mock.call_args.kwargs["additional_kwargs"] == {
         "reasoning_effort": "none",
     }
+
+
+def test_get_llm_uses_responses_api_when_enabled(mock_ai_config):
+    """
+    GIVEN:
+        - The OpenAI-like backend with the Responses API option on
+    WHEN:
+        - The client builds the LLM
+    THEN:
+        - The real OpenAIResponses class accepts the configuration, and it
+          uses the context size, the endpoint and the pinned HTTP clients
+    """
+    from llama_index.llms.openai import OpenAIResponses
+
+    mock_ai_config.llm_backend = "openai-like"
+    mock_ai_config.llm_model = "model-unknown-to-llama-index"
+    mock_ai_config.llm_api_key = "test_api_key"
+    mock_ai_config.llm_endpoint = "http://test-url/v1"
+    mock_ai_config.llm_use_responses_api = True
+    mock_ai_config.llm_extra_params = {"service_tier": "flex"}
+
+    llm = AIClient().llm
+
+    assert isinstance(llm, OpenAIResponses)
+    assert llm.model == "model-unknown-to-llama-index"
+    assert llm.api_base == "http://test-url/v1"
+    assert llm.context_window == mock_ai_config.llm_context_size
+    assert llm.reasoning_options == {}
+    assert llm.system_prompt == LLM_SYSTEM_PROMPT
+    assert llm.additional_kwargs == {"service_tier": "flex"}
+    assert isinstance(
+        llm._http_client._transport,
+        PinnedHostHTTPTransport,
+    )
+    assert isinstance(
+        llm._async_http_client._transport,
+        PinnedHostAsyncHTTPTransport,
+    )
 
 
 def test_run_llm_query_openai_timeout_raises_local_error(

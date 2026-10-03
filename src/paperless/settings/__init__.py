@@ -1240,3 +1240,7 @@ LLM_ALLOW_INTERNAL_ENDPOINTS = get_bool_from_env(
 )
 # JSON object passed straight through to the LLM backend's request body
 LLM_EXTRA_PARAMS = get_json_from_env("PAPERLESS_AI_LLM_EXTRA_PARAMS", {}, dict)
+LLM_USE_RESPONSES_API = get_bool_from_env(
+    "PAPERLESS_AI_LLM_USE_RESPONSES_API",
+    "false",
+)

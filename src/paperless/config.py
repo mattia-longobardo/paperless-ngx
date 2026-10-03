@@ -263,6 +263,7 @@ class AIConfig(BaseConfig):
     llm_output_language: str = dataclasses.field(init=False)
     llm_allow_internal_endpoints: bool = dataclasses.field(init=False)
     llm_extra_params: dict[str, Any] = dataclasses.field(init=False)
+    llm_use_responses_api: bool = dataclasses.field(init=False)
 
     def __post_init__(self) -> None:
         app_config = self._get_config_instance()
@@ -300,6 +301,7 @@ class AIConfig(BaseConfig):
         )
         self.llm_allow_internal_endpoints = settings.LLM_ALLOW_INTERNAL_ENDPOINTS
         self.llm_extra_params = settings.LLM_EXTRA_PARAMS
+        self.llm_use_responses_api = settings.LLM_USE_RESPONSES_API
 
     @property
     def llm_index_enabled(self) -> bool:
