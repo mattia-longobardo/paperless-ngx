@@ -3,3 +3,4 @@ FROM ghcr.io/paperless-ngx/paperless-ngx:3.4.1
 COPY --chown=1000:1000 src/paperless/config.py /usr/src/paperless/src/paperless/config.py
 COPY --chown=1000:1000 src/paperless/settings/__init__.py /usr/src/paperless/src/paperless/settings/__init__.py
 COPY --chown=1000:1000 src/paperless_ai/client.py /usr/src/paperless/src/paperless_ai/client.py
+COPY --chown=1000:1000 src/documents/workflows/webhooks.py /usr/src/paperless/src/documents/workflows/webhooks.py
