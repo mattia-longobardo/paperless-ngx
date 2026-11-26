@@ -993,6 +993,11 @@ POST_CONSUME_SCRIPT = os.getenv("PAPERLESS_POST_CONSUME_SCRIPT")
 # Specify the default date order (for autodetected dates)
 DATE_ORDER = os.getenv("PAPERLESS_DATE_ORDER", "DMY")
 FILENAME_DATE_ORDER = os.getenv("PAPERLESS_FILENAME_DATE_ORDER")
+# Homelab patch: drop the created date from download/export file names
+PUBLIC_FILENAME_INCLUDE_DATE = get_bool_from_env(
+    "PAPERLESS_PUBLIC_FILENAME_INCLUDE_DATE",
+    "true",
+)
 
 
 # If not set, we will infer it at runtime

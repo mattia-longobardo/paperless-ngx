@@ -139,6 +139,17 @@ class TestDocument(TestCase):
         )
         self.assertEqual(doc.get_public_filename(), "2020-12-25 test.pdf")
 
+    @override_settings(PUBLIC_FILENAME_INCLUDE_DATE=False)
+    def test_file_name_without_date(self) -> None:
+        doc = Document(
+            mime_type="application/pdf",
+            title="test",
+            created=date(2020, 12, 25),
+        )
+        self.assertEqual(doc.get_public_filename(), "test.pdf")
+        doc.title = ""
+        self.assertEqual(doc.get_public_filename(), "2020-12-25.pdf")
+
     def test_file_name_jpg(self) -> None:
         doc = Document(
             mime_type="image/jpeg",

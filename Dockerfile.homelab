@@ -4,3 +4,4 @@ COPY --chown=1000:1000 src/paperless/config.py /usr/src/paperless/src/paperless/
 COPY --chown=1000:1000 src/paperless/settings/__init__.py /usr/src/paperless/src/paperless/settings/__init__.py
 COPY --chown=1000:1000 src/paperless_ai/client.py /usr/src/paperless/src/paperless_ai/client.py
 COPY --chown=1000:1000 src/documents/workflows/webhooks.py /usr/src/paperless/src/documents/workflows/webhooks.py
+COPY --chown=1000:1000 src/documents/models.py /usr/src/paperless/src/documents/models.py

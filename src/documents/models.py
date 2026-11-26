@@ -510,7 +510,17 @@ class Document(SoftDeleteModel, ModelWithOwner):  # type: ignore[django-manager-
         tail = f"_{counter:02}{extension}" if counter else extension
 
         head_bytes = max(0, max_bytes - len(tail.encode()))
-        head = str(context_document).encode()[:head_bytes].decode(errors="ignore")
+        name = str(context_document)
+        if not settings.PUBLIC_FILENAME_INCLUDE_DATE:
+            name = (
+                " ".join(
+                    str(part)
+                    for part in (context_document.correspondent, context_document.title)
+                    if part
+                )
+                or name
+            )
+        head = name.encode()[:head_bytes].decode(errors="ignore")
 
         return pathvalidate.sanitize_filename(
             head + tail,

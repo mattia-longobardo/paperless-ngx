@@ -10,7 +10,7 @@ Follow skill `coding-hygiene` and the "Coding hygiene" section of `/home/mattia/
 
 - Fork of `paperless-ngx/paperless-ngx`. Do not open PRs and do not push to `upstream`. With `gh`, always give `-R mattia-longobardo/paperless-ngx`.
 - Production branch: `main`, that is upstream `main` plus the local patches. GitHub Actions is disabled.
-- Local patches: OpenAI Responses API (`PAPERLESS_AI_LLM_USE_RESPONSES_API`) and OAuth2 for webhooks (`PAPERLESS_WEBHOOK_OAUTH2_*`).
+- Local patches: OpenAI Responses API (`PAPERLESS_AI_LLM_USE_RESPONSES_API`) and OAuth2 for webhooks (`PAPERLESS_WEBHOOK_OAUTH2_*`), download file names without the created date (`PAPERLESS_PUBLIC_FILENAME_INCLUDE_DATE`, default `true`).
 - Rollback to 3.2.1: branch `local/v3.2.1-responses` in the bundle `~/.local/share/git-bundles/pers-186-paperless/paperless-ngx.bundle` on the server. The image `paperless-ngx-homelab:3.2.1-responses` must be rebuilt from this branch.
 - Service: `paperless-ngx`, in the Homelab `storage/` stack. The live checkout is `storage/paperless-ngx/homelab`.
 - Remote `upstream`: only `main` and no tags. Configuration: `git remote add -t main upstream <url>` and `git config remote.upstream.tagOpt --no-tags`.
@@ -40,7 +40,7 @@ Run the full suite in a container of the image, without `PNGX_CONTAINERIZED`: wi
 A file in this list starts the full suite:
 
 - Data: `src/*/migrations/`
-- Local patches: `Dockerfile.homelab`, `src/paperless/config.py`, `src/paperless/settings/__init__.py`, `src/paperless_ai/client.py`, `src/documents/workflows/webhooks.py`
+- Local patches: `Dockerfile.homelab`, `src/paperless/config.py`, `src/paperless/settings/__init__.py`, `src/paperless_ai/client.py`, `src/documents/workflows/webhooks.py`, `src/documents/models.py`
 - Dependencies: `pyproject.toml`, `uv.lock`
 
 ## Deploy
